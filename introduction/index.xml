@@ -27,7 +27,11 @@ of sharing a single binary, easy and fast.&lt;/p&gt;
 
 &lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
 
-&lt;p&gt;TODO (when public released?)&lt;/p&gt;
+&lt;p&gt;An official Docker image is available:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ docker pull themotion/ladder
+$ docker run -p 9094:9094 themotion/ladder
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;building-from-source&#34;&gt;Building from source&lt;/h2&gt;
 
@@ -38,10 +42,8 @@ of sharing a single binary, easy and fast.&lt;/p&gt;
 
 &lt;p&gt;You can also build cloning the repository:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mkdir -p $GOPATH/src/github.com/themotion
-$ cd $GOPATH/src/github.com/themotion
-$ git clone https://github.com/themotion/ladder.git
-$ cd ladder
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ git clone https://github.com/themotion/ladder.git $GOPATH/src/github.com/themotion/ladder
+$ cd $GOPATH/src/github.com/themotion/ladder
 $ make build_release
 $ ./bin/ladder --help
 &lt;/code&gt;&lt;/pre&gt;

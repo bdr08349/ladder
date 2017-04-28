@@ -468,10 +468,9 @@
 			<br>
 			Ladder is written in Go, this makes it very portable, Go gives us the power of sharing a single binary, easy and fast.
 Precompiled binary TODO (when first version uploaded)
-Docker TODO (when public released?)
-Building from source You can build from source using go:
+Docker An official Docker image is available:
+$ docker pull themotion/ladder $ docker run -p 9094:9094 themotion/ladder  Building from source You can build from source using go:
 go get github.com/themotion/ladder  You can also build cloning the repository:
-$ mkdir -p $GOPATH/src/github.com/themotion $ cd $GOPATH/src/github.com/themotion $ git clone <a href="https://github.com/themotion/ladder.git">https://github.com/themotion/ladder.git</a> $ cd ladder $ make build_release $ .
 
 			<hr>
 			
