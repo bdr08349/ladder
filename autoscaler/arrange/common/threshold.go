@@ -46,17 +46,11 @@ const (
 	thresholdRegName = "threshold"
 )
 
-// ThresholdCreator can create a threshold arranger
-type ThresholdCreator struct{}
-
-// Create will create a threshold arrangers
-func (t *ThresholdCreator) Create(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
-	return NewThreshold(ctx, opts)
-}
-
 // Autoregister on arranger creators
 func init() {
-	arrange.Register(thresholdRegName, &ThresholdCreator{})
+	arrange.Register(thresholdRegName, arrange.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
+		return NewThreshold(ctx, opts)
+	}))
 }
 
 // NewThreshold will create a Threshold arranger

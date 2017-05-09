@@ -32,15 +32,11 @@ const (
 	inListRegName = "in_list"
 )
 
-type inListCreator struct{}
-
-func (i *inListCreator) Create(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
-	return NewInList(ctx, opts)
-}
-
 // Autoregister on arranger creators
 func init() {
-	arrange.Register(inListRegName, &inListCreator{})
+	arrange.Register(inListRegName, arrange.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
+		return NewInList(ctx, opts)
+	}))
 }
 
 // NewInList creates an InList arranger (Upscale has priority)

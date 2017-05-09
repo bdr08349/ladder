@@ -36,15 +36,10 @@ type PrometheusMetric struct {
 
 }
 
-type prometheusMetricCreator struct{}
-
-// Create will create a PrometheusMetric object
-func (p *prometheusMetricCreator) Create(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
-	return NewPrometheusMetric(ctx, opts)
-}
-
 func init() {
-	gather.Register(pmRegName, &prometheusMetricCreator{})
+	gather.Register(pmRegName, gather.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
+		return NewPrometheusMetric(ctx, opts)
+	}))
 }
 
 // NewPrometheusMetric creates an Prometheus gatherer

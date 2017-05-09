@@ -25,15 +25,11 @@ type Random struct {
 	MinLimit int64
 }
 
-type randomCreator struct{}
-
-func (r *randomCreator) Create(_ context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
-	return NewRandom(opts)
-}
-
 // Autoregister on gatherers creator
 func init() {
-	gather.Register(randomRegName, &randomCreator{})
+	gather.Register(randomRegName, gather.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
+		return NewRandom(opts)
+	}))
 }
 
 // NewRandom creates a random Gatherer

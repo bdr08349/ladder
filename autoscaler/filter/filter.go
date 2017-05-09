@@ -24,6 +24,14 @@ type Creator interface {
 	Create(ctx context.Context, opts map[string]interface{}) (Filterer, error)
 }
 
+// CreatorFunc function implements Creator interface giving a handy way of add new creators using functions
+type CreatorFunc func(ctx context.Context, opts map[string]interface{}) (Filterer, error)
+
+// Create implements Creator interface
+func (f CreatorFunc) Create(ctx context.Context, opts map[string]interface{}) (Filterer, error) {
+	return f(ctx, opts)
+}
+
 // Register registers a filter creator on the registry, it will panic if receives nil or the
 // filter creator is already registered
 func Register(name string, c Creator) {

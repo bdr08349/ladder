@@ -25,6 +25,14 @@ type Creator interface {
 	Create(ctx context.Context, opts map[string]interface{}) (Gatherer, error)
 }
 
+// CreatorFunc function implements Creator interface giving a handy way of add new creators using functions
+type CreatorFunc func(ctx context.Context, opts map[string]interface{}) (Gatherer, error)
+
+// Create implements Creator interface
+func (f CreatorFunc) Create(ctx context.Context, opts map[string]interface{}) (Gatherer, error) {
+	return f(ctx, opts)
+}
+
 // Register resgisters a Gatherer creator on the registry, it will panic if receives nil or the
 // gatherer creator is already registered
 func Register(name string, c Creator) {
