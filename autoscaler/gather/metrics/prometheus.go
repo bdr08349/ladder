@@ -7,7 +7,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/prometheus/client_golang/api/prometheus"
+	"github.com/prometheus/client_golang/api"
+	"github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 
 	"github.com/themotion/ladder/autoscaler/gather"
@@ -31,8 +32,8 @@ type PrometheusMetric struct {
 	addresses []string
 	qry       string
 
-	apiCs []prometheus.QueryAPI // api clients one per endpoint
-	log   *log.Log              // custom logger
+	apiCs []v1.API // api clients one per endpoint
+	log   *log.Log // custom logger
 
 }
 
@@ -74,15 +75,15 @@ func NewPrometheusMetric(ctx context.Context, opts map[string]interface{}) (p *P
 		return nil, fmt.Errorf("%s configuration opt is required", pmQuery)
 	}
 
-	p.apiCs = make([]prometheus.QueryAPI, len(p.addresses))
+	p.apiCs = make([]v1.API, len(p.addresses))
 
 	for i, a := range p.addresses {
 		// Create the client
-		c, err := prometheus.New(prometheus.Config{Address: a})
+		apiC, err := api.NewClient(api.Config{Address: a})
 		if err != nil {
 			return nil, err
 		}
-		p.apiCs[i] = prometheus.NewQueryAPI(c)
+		p.apiCs[i] = v1.NewAPI(apiC)
 	}
 
 	// Logger
