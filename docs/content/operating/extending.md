@@ -1,6 +1,6 @@
 ---
 date: 2016-11-13T18:02:45Z
-title: Using as a framework
+title: Extending Ladder
 menu:
   main:
     parent: Operating

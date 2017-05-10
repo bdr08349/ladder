@@ -24,6 +24,10 @@ global:
   interval: 30s
   warmup: 3m
   scaling_wait_timeout: 3m
+  plugins:
+    - plugins/gatherers.so
+    - plugins/scalers_gcp.so
+    - plugins/scalers_aws.so
 
 autoscaler_files:
   - cfg-autoscalers/services/amis/*.yml
@@ -65,6 +69,8 @@ It starts with `global:`
 (gathering, solving... will occur), by default `30s`
 * `scaling_wait_timeout`: The time that will wait before giving timeout when a
 correct scalation starts the process of waiting until the target has scaled `2m`
+* `plugins`: A list of plugins (.so files) that will be loaded at runtime. See
+[extending]({{< relref "operating/extending.md" >}}) section to know more about plugins and how to extend Ladder
 
 ## Autoscalers cofiguration files
 
