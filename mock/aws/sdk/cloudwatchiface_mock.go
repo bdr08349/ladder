@@ -4,6 +4,7 @@
 package sdk
 
 import (
+	aws "github.com/aws/aws-sdk-go/aws"
 	request "github.com/aws/aws-sdk-go/aws/request"
 	cloudwatch "github.com/aws/aws-sdk-go/service/cloudwatch"
 	gomock "github.com/golang/mock/gomock"
@@ -30,17 +31,6 @@ func (_m *MockCloudWatchAPI) EXPECT() *_MockCloudWatchAPIRecorder {
 	return _m.recorder
 }
 
-func (_m *MockCloudWatchAPI) DeleteAlarmsRequest(_param0 *cloudwatch.DeleteAlarmsInput) (*request.Request, *cloudwatch.DeleteAlarmsOutput) {
-	ret := _m.ctrl.Call(_m, "DeleteAlarmsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.DeleteAlarmsOutput)
-	return ret0, ret1
-}
-
-func (_mr *_MockCloudWatchAPIRecorder) DeleteAlarmsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteAlarmsRequest", arg0)
-}
-
 func (_m *MockCloudWatchAPI) DeleteAlarms(_param0 *cloudwatch.DeleteAlarmsInput) (*cloudwatch.DeleteAlarmsOutput, error) {
 	ret := _m.ctrl.Call(_m, "DeleteAlarms", _param0)
 	ret0, _ := ret[0].(*cloudwatch.DeleteAlarmsOutput)
@@ -52,15 +42,31 @@ func (_mr *_MockCloudWatchAPIRecorder) DeleteAlarms(arg0 interface{}) *gomock.Ca
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteAlarms", arg0)
 }
 
-func (_m *MockCloudWatchAPI) DescribeAlarmHistoryRequest(_param0 *cloudwatch.DescribeAlarmHistoryInput) (*request.Request, *cloudwatch.DescribeAlarmHistoryOutput) {
-	ret := _m.ctrl.Call(_m, "DescribeAlarmHistoryRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmHistoryOutput)
+func (_m *MockCloudWatchAPI) DeleteAlarmsWithContext(_param0 aws.Context, _param1 *cloudwatch.DeleteAlarmsInput, _param2 ...request.Option) (*cloudwatch.DeleteAlarmsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DeleteAlarmsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.DeleteAlarmsOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistoryRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistoryRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) DeleteAlarmsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteAlarmsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) DeleteAlarmsRequest(_param0 *cloudwatch.DeleteAlarmsInput) (*request.Request, *cloudwatch.DeleteAlarmsOutput) {
+	ret := _m.ctrl.Call(_m, "DeleteAlarmsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.DeleteAlarmsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DeleteAlarmsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteAlarmsRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) DescribeAlarmHistory(_param0 *cloudwatch.DescribeAlarmHistoryInput) (*cloudwatch.DescribeAlarmHistoryOutput, error) {
@@ -74,6 +80,33 @@ func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistory(arg0 interface{}) *g
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistory", arg0)
 }
 
+func (_m *MockCloudWatchAPI) DescribeAlarmHistoryWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmHistoryInput, _param2 ...request.Option) (*cloudwatch.DescribeAlarmHistoryOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DescribeAlarmHistoryWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.DescribeAlarmHistoryOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistoryWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistoryWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) DescribeAlarmHistoryRequest(_param0 *cloudwatch.DescribeAlarmHistoryInput) (*request.Request, *cloudwatch.DescribeAlarmHistoryOutput) {
+	ret := _m.ctrl.Call(_m, "DescribeAlarmHistoryRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmHistoryOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistoryRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistoryRequest", arg0)
+}
+
 func (_m *MockCloudWatchAPI) DescribeAlarmHistoryPages(_param0 *cloudwatch.DescribeAlarmHistoryInput, _param1 func(*cloudwatch.DescribeAlarmHistoryOutput, bool) bool) error {
 	ret := _m.ctrl.Call(_m, "DescribeAlarmHistoryPages", _param0, _param1)
 	ret0, _ := ret[0].(error)
@@ -84,15 +117,19 @@ func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistoryPages(arg0, arg1 inte
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistoryPages", arg0, arg1)
 }
 
-func (_m *MockCloudWatchAPI) DescribeAlarmsRequest(_param0 *cloudwatch.DescribeAlarmsInput) (*request.Request, *cloudwatch.DescribeAlarmsOutput) {
-	ret := _m.ctrl.Call(_m, "DescribeAlarmsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmsOutput)
-	return ret0, ret1
+func (_m *MockCloudWatchAPI) DescribeAlarmHistoryPagesWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmHistoryInput, _param2 func(*cloudwatch.DescribeAlarmHistoryOutput, bool) bool, _param3 ...request.Option) error {
+	_s := []interface{}{_param0, _param1, _param2}
+	for _, _x := range _param3 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DescribeAlarmHistoryPagesWithContext", _s...)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmHistoryPagesWithContext(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmHistoryPagesWithContext", _s...)
 }
 
 func (_m *MockCloudWatchAPI) DescribeAlarms(_param0 *cloudwatch.DescribeAlarmsInput) (*cloudwatch.DescribeAlarmsOutput, error) {
@@ -106,6 +143,33 @@ func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarms(arg0 interface{}) *gomock.
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarms", arg0)
 }
 
+func (_m *MockCloudWatchAPI) DescribeAlarmsWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmsInput, _param2 ...request.Option) (*cloudwatch.DescribeAlarmsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DescribeAlarmsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.DescribeAlarmsOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) DescribeAlarmsRequest(_param0 *cloudwatch.DescribeAlarmsInput) (*request.Request, *cloudwatch.DescribeAlarmsOutput) {
+	ret := _m.ctrl.Call(_m, "DescribeAlarmsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsRequest", arg0)
+}
+
 func (_m *MockCloudWatchAPI) DescribeAlarmsPages(_param0 *cloudwatch.DescribeAlarmsInput, _param1 func(*cloudwatch.DescribeAlarmsOutput, bool) bool) error {
 	ret := _m.ctrl.Call(_m, "DescribeAlarmsPages", _param0, _param1)
 	ret0, _ := ret[0].(error)
@@ -116,15 +180,19 @@ func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsPages(arg0, arg1 interface{
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsPages", arg0, arg1)
 }
 
-func (_m *MockCloudWatchAPI) DescribeAlarmsForMetricRequest(_param0 *cloudwatch.DescribeAlarmsForMetricInput) (*request.Request, *cloudwatch.DescribeAlarmsForMetricOutput) {
-	ret := _m.ctrl.Call(_m, "DescribeAlarmsForMetricRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmsForMetricOutput)
-	return ret0, ret1
+func (_m *MockCloudWatchAPI) DescribeAlarmsPagesWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmsInput, _param2 func(*cloudwatch.DescribeAlarmsOutput, bool) bool, _param3 ...request.Option) error {
+	_s := []interface{}{_param0, _param1, _param2}
+	for _, _x := range _param3 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DescribeAlarmsPagesWithContext", _s...)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsForMetricRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsForMetricRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsPagesWithContext(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsPagesWithContext", _s...)
 }
 
 func (_m *MockCloudWatchAPI) DescribeAlarmsForMetric(_param0 *cloudwatch.DescribeAlarmsForMetricInput) (*cloudwatch.DescribeAlarmsForMetricOutput, error) {
@@ -138,15 +206,31 @@ func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsForMetric(arg0 interface{})
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsForMetric", arg0)
 }
 
-func (_m *MockCloudWatchAPI) DisableAlarmActionsRequest(_param0 *cloudwatch.DisableAlarmActionsInput) (*request.Request, *cloudwatch.DisableAlarmActionsOutput) {
-	ret := _m.ctrl.Call(_m, "DisableAlarmActionsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.DisableAlarmActionsOutput)
+func (_m *MockCloudWatchAPI) DescribeAlarmsForMetricWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmsForMetricInput, _param2 ...request.Option) (*cloudwatch.DescribeAlarmsForMetricOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DescribeAlarmsForMetricWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.DescribeAlarmsForMetricOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) DisableAlarmActionsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DisableAlarmActionsRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsForMetricWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsForMetricWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) DescribeAlarmsForMetricRequest(_param0 *cloudwatch.DescribeAlarmsForMetricInput) (*request.Request, *cloudwatch.DescribeAlarmsForMetricOutput) {
+	ret := _m.ctrl.Call(_m, "DescribeAlarmsForMetricRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.DescribeAlarmsForMetricOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DescribeAlarmsForMetricRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DescribeAlarmsForMetricRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) DisableAlarmActions(_param0 *cloudwatch.DisableAlarmActionsInput) (*cloudwatch.DisableAlarmActionsOutput, error) {
@@ -160,15 +244,31 @@ func (_mr *_MockCloudWatchAPIRecorder) DisableAlarmActions(arg0 interface{}) *go
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DisableAlarmActions", arg0)
 }
 
-func (_m *MockCloudWatchAPI) EnableAlarmActionsRequest(_param0 *cloudwatch.EnableAlarmActionsInput) (*request.Request, *cloudwatch.EnableAlarmActionsOutput) {
-	ret := _m.ctrl.Call(_m, "EnableAlarmActionsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.EnableAlarmActionsOutput)
+func (_m *MockCloudWatchAPI) DisableAlarmActionsWithContext(_param0 aws.Context, _param1 *cloudwatch.DisableAlarmActionsInput, _param2 ...request.Option) (*cloudwatch.DisableAlarmActionsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DisableAlarmActionsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.DisableAlarmActionsOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) EnableAlarmActionsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "EnableAlarmActionsRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) DisableAlarmActionsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DisableAlarmActionsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) DisableAlarmActionsRequest(_param0 *cloudwatch.DisableAlarmActionsInput) (*request.Request, *cloudwatch.DisableAlarmActionsOutput) {
+	ret := _m.ctrl.Call(_m, "DisableAlarmActionsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.DisableAlarmActionsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) DisableAlarmActionsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DisableAlarmActionsRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) EnableAlarmActions(_param0 *cloudwatch.EnableAlarmActionsInput) (*cloudwatch.EnableAlarmActionsOutput, error) {
@@ -182,15 +282,31 @@ func (_mr *_MockCloudWatchAPIRecorder) EnableAlarmActions(arg0 interface{}) *gom
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "EnableAlarmActions", arg0)
 }
 
-func (_m *MockCloudWatchAPI) GetMetricStatisticsRequest(_param0 *cloudwatch.GetMetricStatisticsInput) (*request.Request, *cloudwatch.GetMetricStatisticsOutput) {
-	ret := _m.ctrl.Call(_m, "GetMetricStatisticsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.GetMetricStatisticsOutput)
+func (_m *MockCloudWatchAPI) EnableAlarmActionsWithContext(_param0 aws.Context, _param1 *cloudwatch.EnableAlarmActionsInput, _param2 ...request.Option) (*cloudwatch.EnableAlarmActionsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "EnableAlarmActionsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.EnableAlarmActionsOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) GetMetricStatisticsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetMetricStatisticsRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) EnableAlarmActionsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "EnableAlarmActionsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) EnableAlarmActionsRequest(_param0 *cloudwatch.EnableAlarmActionsInput) (*request.Request, *cloudwatch.EnableAlarmActionsOutput) {
+	ret := _m.ctrl.Call(_m, "EnableAlarmActionsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.EnableAlarmActionsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) EnableAlarmActionsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "EnableAlarmActionsRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) GetMetricStatistics(_param0 *cloudwatch.GetMetricStatisticsInput) (*cloudwatch.GetMetricStatisticsOutput, error) {
@@ -204,15 +320,31 @@ func (_mr *_MockCloudWatchAPIRecorder) GetMetricStatistics(arg0 interface{}) *go
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetMetricStatistics", arg0)
 }
 
-func (_m *MockCloudWatchAPI) ListMetricsRequest(_param0 *cloudwatch.ListMetricsInput) (*request.Request, *cloudwatch.ListMetricsOutput) {
-	ret := _m.ctrl.Call(_m, "ListMetricsRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.ListMetricsOutput)
+func (_m *MockCloudWatchAPI) GetMetricStatisticsWithContext(_param0 aws.Context, _param1 *cloudwatch.GetMetricStatisticsInput, _param2 ...request.Option) (*cloudwatch.GetMetricStatisticsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "GetMetricStatisticsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.GetMetricStatisticsOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) ListMetricsRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetricsRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) GetMetricStatisticsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetMetricStatisticsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) GetMetricStatisticsRequest(_param0 *cloudwatch.GetMetricStatisticsInput) (*request.Request, *cloudwatch.GetMetricStatisticsOutput) {
+	ret := _m.ctrl.Call(_m, "GetMetricStatisticsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.GetMetricStatisticsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) GetMetricStatisticsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetMetricStatisticsRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) ListMetrics(_param0 *cloudwatch.ListMetricsInput) (*cloudwatch.ListMetricsOutput, error) {
@@ -226,6 +358,33 @@ func (_mr *_MockCloudWatchAPIRecorder) ListMetrics(arg0 interface{}) *gomock.Cal
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetrics", arg0)
 }
 
+func (_m *MockCloudWatchAPI) ListMetricsWithContext(_param0 aws.Context, _param1 *cloudwatch.ListMetricsInput, _param2 ...request.Option) (*cloudwatch.ListMetricsOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "ListMetricsWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.ListMetricsOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) ListMetricsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetricsWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) ListMetricsRequest(_param0 *cloudwatch.ListMetricsInput) (*request.Request, *cloudwatch.ListMetricsOutput) {
+	ret := _m.ctrl.Call(_m, "ListMetricsRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.ListMetricsOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) ListMetricsRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetricsRequest", arg0)
+}
+
 func (_m *MockCloudWatchAPI) ListMetricsPages(_param0 *cloudwatch.ListMetricsInput, _param1 func(*cloudwatch.ListMetricsOutput, bool) bool) error {
 	ret := _m.ctrl.Call(_m, "ListMetricsPages", _param0, _param1)
 	ret0, _ := ret[0].(error)
@@ -236,15 +395,19 @@ func (_mr *_MockCloudWatchAPIRecorder) ListMetricsPages(arg0, arg1 interface{}) 
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetricsPages", arg0, arg1)
 }
 
-func (_m *MockCloudWatchAPI) PutMetricAlarmRequest(_param0 *cloudwatch.PutMetricAlarmInput) (*request.Request, *cloudwatch.PutMetricAlarmOutput) {
-	ret := _m.ctrl.Call(_m, "PutMetricAlarmRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.PutMetricAlarmOutput)
-	return ret0, ret1
+func (_m *MockCloudWatchAPI) ListMetricsPagesWithContext(_param0 aws.Context, _param1 *cloudwatch.ListMetricsInput, _param2 func(*cloudwatch.ListMetricsOutput, bool) bool, _param3 ...request.Option) error {
+	_s := []interface{}{_param0, _param1, _param2}
+	for _, _x := range _param3 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "ListMetricsPagesWithContext", _s...)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) PutMetricAlarmRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricAlarmRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) ListMetricsPagesWithContext(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "ListMetricsPagesWithContext", _s...)
 }
 
 func (_m *MockCloudWatchAPI) PutMetricAlarm(_param0 *cloudwatch.PutMetricAlarmInput) (*cloudwatch.PutMetricAlarmOutput, error) {
@@ -258,15 +421,31 @@ func (_mr *_MockCloudWatchAPIRecorder) PutMetricAlarm(arg0 interface{}) *gomock.
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricAlarm", arg0)
 }
 
-func (_m *MockCloudWatchAPI) PutMetricDataRequest(_param0 *cloudwatch.PutMetricDataInput) (*request.Request, *cloudwatch.PutMetricDataOutput) {
-	ret := _m.ctrl.Call(_m, "PutMetricDataRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.PutMetricDataOutput)
+func (_m *MockCloudWatchAPI) PutMetricAlarmWithContext(_param0 aws.Context, _param1 *cloudwatch.PutMetricAlarmInput, _param2 ...request.Option) (*cloudwatch.PutMetricAlarmOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "PutMetricAlarmWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.PutMetricAlarmOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) PutMetricDataRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricDataRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) PutMetricAlarmWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricAlarmWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) PutMetricAlarmRequest(_param0 *cloudwatch.PutMetricAlarmInput) (*request.Request, *cloudwatch.PutMetricAlarmOutput) {
+	ret := _m.ctrl.Call(_m, "PutMetricAlarmRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.PutMetricAlarmOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) PutMetricAlarmRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricAlarmRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) PutMetricData(_param0 *cloudwatch.PutMetricDataInput) (*cloudwatch.PutMetricDataOutput, error) {
@@ -280,15 +459,31 @@ func (_mr *_MockCloudWatchAPIRecorder) PutMetricData(arg0 interface{}) *gomock.C
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricData", arg0)
 }
 
-func (_m *MockCloudWatchAPI) SetAlarmStateRequest(_param0 *cloudwatch.SetAlarmStateInput) (*request.Request, *cloudwatch.SetAlarmStateOutput) {
-	ret := _m.ctrl.Call(_m, "SetAlarmStateRequest", _param0)
-	ret0, _ := ret[0].(*request.Request)
-	ret1, _ := ret[1].(*cloudwatch.SetAlarmStateOutput)
+func (_m *MockCloudWatchAPI) PutMetricDataWithContext(_param0 aws.Context, _param1 *cloudwatch.PutMetricDataInput, _param2 ...request.Option) (*cloudwatch.PutMetricDataOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "PutMetricDataWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.PutMetricDataOutput)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockCloudWatchAPIRecorder) SetAlarmStateRequest(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAlarmStateRequest", arg0)
+func (_mr *_MockCloudWatchAPIRecorder) PutMetricDataWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricDataWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) PutMetricDataRequest(_param0 *cloudwatch.PutMetricDataInput) (*request.Request, *cloudwatch.PutMetricDataOutput) {
+	ret := _m.ctrl.Call(_m, "PutMetricDataRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.PutMetricDataOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) PutMetricDataRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutMetricDataRequest", arg0)
 }
 
 func (_m *MockCloudWatchAPI) SetAlarmState(_param0 *cloudwatch.SetAlarmStateInput) (*cloudwatch.SetAlarmStateOutput, error) {
@@ -300,4 +495,56 @@ func (_m *MockCloudWatchAPI) SetAlarmState(_param0 *cloudwatch.SetAlarmStateInpu
 
 func (_mr *_MockCloudWatchAPIRecorder) SetAlarmState(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAlarmState", arg0)
+}
+
+func (_m *MockCloudWatchAPI) SetAlarmStateWithContext(_param0 aws.Context, _param1 *cloudwatch.SetAlarmStateInput, _param2 ...request.Option) (*cloudwatch.SetAlarmStateOutput, error) {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "SetAlarmStateWithContext", _s...)
+	ret0, _ := ret[0].(*cloudwatch.SetAlarmStateOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) SetAlarmStateWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAlarmStateWithContext", _s...)
+}
+
+func (_m *MockCloudWatchAPI) SetAlarmStateRequest(_param0 *cloudwatch.SetAlarmStateInput) (*request.Request, *cloudwatch.SetAlarmStateOutput) {
+	ret := _m.ctrl.Call(_m, "SetAlarmStateRequest", _param0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*cloudwatch.SetAlarmStateOutput)
+	return ret0, ret1
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) SetAlarmStateRequest(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAlarmStateRequest", arg0)
+}
+
+func (_m *MockCloudWatchAPI) WaitUntilAlarmExists(_param0 *cloudwatch.DescribeAlarmsInput) error {
+	ret := _m.ctrl.Call(_m, "WaitUntilAlarmExists", _param0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) WaitUntilAlarmExists(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "WaitUntilAlarmExists", arg0)
+}
+
+func (_m *MockCloudWatchAPI) WaitUntilAlarmExistsWithContext(_param0 aws.Context, _param1 *cloudwatch.DescribeAlarmsInput, _param2 ...request.WaiterOption) error {
+	_s := []interface{}{_param0, _param1}
+	for _, _x := range _param2 {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "WaitUntilAlarmExistsWithContext", _s...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockCloudWatchAPIRecorder) WaitUntilAlarmExistsWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "WaitUntilAlarmExistsWithContext", _s...)
 }
