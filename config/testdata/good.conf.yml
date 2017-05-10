@@ -17,6 +17,12 @@ global:
   # scalation is higher than this setting
   scaling_wait_timeout: 1m
 
+  # Plugins will be loaded on startup
+  plugins:
+    - plugins/plugin1.so
+    - plugins/plugin2.so
+    - plugins/plugin3.so
+
 # The paths where the autoscalers configuration is
 autoscaler_files:
   - testdata/good/as1/*.yml

@@ -18,6 +18,10 @@ global:
   interval: 30s
   warmup: 3m
   scaling_wait_timeout: 1m
+  plugins:
+    - plugins/plugin1.so
+    - plugins/plugin2.so
+    - plugins/plugin3.so
 
 autoscaler_files:
   - testdata/as1/*.yml
@@ -33,6 +37,7 @@ autoscaler_files:
 		Interval:           30 * time.Second,
 		Warmup:             3 * time.Minute,
 		ScalingWaitTimeout: 1 * time.Minute,
+		Plugins:            []string{"plugins/plugin1.so", "plugins/plugin2.so", "plugins/plugin3.so"},
 	}
 	expectedAFsCfg := AutoscalerFiles{
 		"testdata/as1/*.yml",
