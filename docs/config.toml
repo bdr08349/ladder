@@ -79,7 +79,7 @@ canonifyURLs = true
 #	- configuration
 # 	- metrics
 # 	- API
-# 	- Using as a framework
+# 	- Extending Ladder
 [[menu.main]]
   name   = "Operating"
   url    = "/operating"
