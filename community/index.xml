@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Community-rsses on Ladder docs</title>
+    <link>https://themotion.github.io/ladder/community/index.xml</link>
+    <description>Recent content in Community-rsses on Ladder docs</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Released under the BSD 3-clause &#39;New&#39; or &#39;Revised&#39; license</copyright>
+    <lastBuildDate>Wed, 17 May 2017 10:47:00 +0000</lastBuildDate>
+    <atom:link href="https://themotion.github.io/ladder/community/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Communication channels</title>
+      <link>https://themotion.github.io/ladder/community/mailing-list/</link>
+      <pubDate>Wed, 17 May 2017 10:47:00 +0000</pubDate>
+      
+      <guid>https://themotion.github.io/ladder/community/mailing-list/</guid>
+      <description>&lt;p&gt;Ladder is an open source project. Here you have some channels used to communicate and contribute&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/themotion/ladder/issues&#34;&gt;Github issues&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!forum/ladderproject&#34;&gt;Mailing list&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

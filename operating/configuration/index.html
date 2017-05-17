@@ -403,9 +403,33 @@
 
 
 
-<a  title="Using as a framework" href="https://themotion.github.io/ladder/operating/framework/">
+<a  title="Extending Ladder" href="https://themotion.github.io/ladder/operating/extending/">
 	
-	Using as a framework
+	Extending Ladder
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Community</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="Communication channels" href="https://themotion.github.io/ladder/community/mailing-list/">
+	
+	Communication channels
 </a>
 
 
@@ -494,6 +518,10 @@ to the other configuration files where the autoscalers are configured.</p>
   interval: 30s
   warmup: 3m
   scaling_wait_timeout: 3m
+  plugins:
+    - plugins/gatherers.so
+    - plugins/scalers_gcp.so
+    - plugins/scalers_aws.so
 
 autoscaler_files:
   - cfg-autoscalers/services/amis/*.yml
@@ -535,6 +563,8 @@ a program or by default to all the autoscalers depending on the setting</p>
 (gathering, solving&hellip; will occur), by default <code>30s</code></li>
 <li><code>scaling_wait_timeout</code>: The time that will wait before giving timeout when a
 correct scalation starts the process of waiting until the target has scaled <code>2m</code></li>
+<li><code>plugins</code>: A list of plugins (.so files) that will be loaded at runtime. See
+<a href="https://themotion.github.io/ladder/operating/extending/">extending</a> section to know more about plugins and how to extend Ladder</li>
 </ul>
 
 <h2 id="autoscalers-cofiguration-files">Autoscalers cofiguration files</h2>

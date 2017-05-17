@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Installing - Ladder docs</title>
+    <title>Extending Ladder - Ladder docs</title>
     <meta name="generator" content="Hugo 0.17" />
 
     
     <meta name="description" content="A flexible and reliable autoscaler">
     
-    <link rel="canonical" href="https://themotion.github.io/ladder/introduction/installing/">
+    <link rel="canonical" href="https://themotion.github.io/ladder/operating/extending/">
     
     <meta name="author" content="TheMotion">
     
 
-    <meta property="og:url" content="https://themotion.github.io/ladder/introduction/installing/">
+    <meta property="og:url" content="https://themotion.github.io/ladder/operating/extending/">
     <meta property="og:title" content="Ladder docs">
     <meta property="og:image" content="https://themotion.github.io/ladder/img/logo.png">
     <meta name="apple-mobile-web-app-title" content="Ladder docs">
@@ -97,7 +97,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Installing
+        Extending Ladder
       </div>
     </div>
 
@@ -500,39 +500,206 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Installing </h1>
+			<h1>Extending Ladder </h1>
 
 			
 
-<p>Ladder is written in Go, this makes it very portable, Go gives us the power
-of sharing a single binary, easy and fast.</p>
+<p>Sometimes we want to scale our custom targets, or apply custom logic on filters or arrengers,
+or our company uses a very strange metric system where all our metrics are, in order you can
+solve this <em>problems</em> Ladder lets you extend using <a href="https://golang.org/pkg/plugin">Go plugins</a>.</p>
 
-<h2 id="precompiled-binary">Precompiled binary</h2>
+<p>Extending Ladder to add custom logic is very easy!, as was described in the [blocks] section, Ladder
+is made up of 5 type of blocks: gatherers, arrangers, solvers, filters and scalers. You can create any
+custom kind of this blocks but it has some requirements.</p>
 
-<p>Precompiled binaries of releases and RCs are available for download at <a href="https://github.com/themotion/ladder/releases">Github</a></p>
+<h2 id="requirements">Requirements</h2>
 
-<h2 id="docker">Docker</h2>
+<ul>
+<li>You need to compile your plugin against the Ladder version that you want to use</li>
+<li>It will use Go &gt;=1.8</li>
+<li>Requires to autoregister the plugin (See the example)</li>
+</ul>
 
-<p>An official Docker image is available:</p>
+<h2 id="blocks">Blocks</h2>
 
-<pre><code class="language-bash">$ docker pull themotion/ladder
-$ docker run -p 9094:9094 themotion/ladder
+<p>Depending on each block we want to implement you will need to satisfy specific interfaces. Lets start</p>
+
+<h3 id="gatherer">Gatherer</h3>
+
+<pre><code class="language-golang">type Gatherer interface {
+	Gather(ctx context.Context) (types.Quantity, error)
+}
 </code></pre>
 
-<h2 id="building-from-source">Building from source</h2>
+<ul>
+<li><code>Gather</code> method receives a context an returns a quantity and an error, this method should get the
+metrics from the external source and return them</li>
+</ul>
 
-<p>You can build from source using go:</p>
+<h3 id="arranger">Arranger</h3>
 
-<pre><code class="language-bash">go get github.com/themotion/ladder
+<pre><code class="language-golang">type Arranger interface {
+	Arrange(ctx context.Context, inputQ, currentQ types.Quantity) (newQ types.Quantity, err error)
+}
 </code></pre>
 
-<p>You can also build cloning the repository:</p>
+<ul>
+<li><code>Arrange</code> method receives a context and 2 quantities, the first quantity is the value obtained from the
+gatherer and the second one is the current scaling target quantity, it should return the wanted
+quantity to set up on the scaling target (finters and solvers may change this quantity before reaching the scaler) and an error if required</li>
+</ul>
 
-<pre><code class="language-bash">$ git clone https://github.com/themotion/ladder.git $GOPATH/src/github.com/themotion/ladder
-$ cd $GOPATH/src/github.com/themotion/ladder
-$ make build_release
-$ ./bin/ladder --help
+<h3 id="solver">Solver</h3>
+
+<pre><code class="language-golang">type Solver interface {
+	Solve(ctx context.Context, qs []types.Quantity) (types.Quantity, error)
+}
 </code></pre>
+
+<ul>
+<li><code>Solve</code> methods receives a context and an slice of quantities, this values will be all the quantities
+got from all the inputters (gatherer + arranger) it should return one, and an error if required</li>
+</ul>
+
+<h3 id="filter">Filter</h3>
+
+<pre><code class="language-golang">type Filterer interface {
+	Filter(ctx context.Context, currentQ, newQ types.Quantity) (q types.Quantity, br bool, err error)
+}
+</code></pre>
+
+<ul>
+<li><code>Filter</code> method receives a context and 2 quantities, the first one is the currenr scalign target quantity
+and the second one is the new quantity (from the solver or previous filter). It returns a quantity
+a boolean that if tru it will break teh chain and an error.</li>
+</ul>
+
+<h3 id="scaler">Scaler</h3>
+
+<pre><code class="language-golang">type Scaler interface {
+	Current(ctx context.Context) (types.Quantity, error)
+	Scale(ctx context.Context, newQ types.Quantity) (scaledQ types.Quantity, mode types.ScalingMode, err error)
+	Wait(ctx context.Context, scaledQ types.Quantity, mode types.ScalingMode) error
+}
+</code></pre>
+
+<ul>
+<li><code>Current</code> method receives a context and returns a quantity that should be the current quantity an scaling target has, and an error if required</li>
+<li><code>Scale</code> receives the context and the scaling quantity decided, it should scale the scaling target and return the quantity scalated to, the scaling mode (ScalingUp, ScalingDown, NotScaling) and an error if required</li>
+<li><code>Wait</code> method receives a context, the scaled quantity and the mode of the scalation, it should wait
+until you decide when the scalation process is finished, returns an error if required</li>
+</ul>
+
+<h2 id="example">Example</h2>
+
+<p>We will make a simple filter as an example. This filter will be called <code>chaos</code> and will apply some sort
+of chaos monkey of scalation process. The filter will stop the chain and not scale (return the current quantity as the new quantity) 50% of the times.</p>
+
+<p>file <code>chaos.go</code>:</p>
+
+<pre><code class="language-golang">package main
+
+import (
+	&quot;context&quot;
+	&quot;math/rand&quot;
+	&quot;time&quot;
+
+	&quot;github.com/themotion/ladder/autoscaler/filter&quot;
+	&quot;github.com/themotion/ladder/log&quot;
+	&quot;github.com/themotion/ladder/types&quot;
+)
+
+const (
+	chaosRegName = &quot;chaos&quot;
+)
+
+func init() {
+	filter.Register(chaosRegName, filter.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
+		return NewChaos(ctx, opts)
+	}))
+}
+
+// Chaos will drop randomly any scalup or scaledown
+type Chaos struct {
+	ctx context.Context
+	log *log.Log // custom logger
+}
+
+// NewChaos returns a new chaos filter
+func NewChaos(ctx context.Context, _ map[string]interface{}) (*Chaos, error) {
+	asName, ok := ctx.Value(&quot;autoscaler&quot;).(string)
+	if !ok {
+		asName = &quot;unknown&quot;
+	}
+	logger := log.WithFields(log.Fields{
+		&quot;autoscaler&quot;: asName,
+		&quot;kind&quot;:       &quot;filterer&quot;,
+		&quot;name&quot;:       chaosRegName,
+	})
+
+	return &amp;Chaos{
+		ctx: ctx,
+		log: logger,
+	}, nil
+}
+
+// Filter will drop randomly scaling stuff and break the chain
+func (c Chaos) Filter(ctx context.Context, currentQ, newQ types.Quantity) (types.Quantity, bool, error) {
+	var brk bool
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	if r.Intn(100)%2 == 0 {
+		newQ = currentQ
+		brk = true
+		c.log.Warningf(&quot;Chaos applied!, breaking the chain and setting to current&quot;)
+	}
+	return newQ, brk, nil
+}
+</code></pre>
+
+<p>We start from top to down:</p>
+
+<p><code>init</code> function executes automatically when the plugin is laoded, in this function we register our filter
+using ladder filter register helper <code>filter.Register</code> with the filter name <code>chaos</code>, we register a <code>filter.CreatorFunc</code> that is a function
+wrapping the creation of our filter object.</p>
+
+<p><code>NewChaos</code> creates the filter instance, it receives the context, from there we get the autoscaling name to
+set up correctly on the logger, and it receives the <code>config</code> map that we define on the settings, in this
+case, this filter doesn&rsquo;t have any options so, we ignore this parameter.</p>
+
+<p>At last <code>Filter</code> will apply chaos when a random number is multiple of 2 (50%).</p>
+
+<p>We need to compile the plugin against the version of Ladder that will run so we get that Ladder version and
+do <code>go build -buildmode=plugin -o {DST_PATH}/chaos.so ./chaos.go</code> and we only need to set up on our <code>ladder.cfg</code> file to load that shared lib (.so). Example:</p>
+
+<pre><code class="language-yaml">global:
+  warmup: 10s
+  plugins:
+    - myplugins/chaos.so
+
+autoscaler_files:
+  - &quot;cfg-autoscalers/*.yml&quot;
+</code></pre>
+
+<p>and use it on the autoscalers:</p>
+
+<pre><code class="language-yaml">...
+  filters:
+    - kind: chaos
+...
+</code></pre>
+
+<p>Check a full ladder plugin project as a further example <a href="https://github.com/slok/ladder-plugin-example">here</a></p>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Plugins file names (f.e <code>myplugin.go</code>) can&rsquo;t be the same, See <a href="https://github.com/golang/go/issues/19004">Go issue</a></p>
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ladder plugins should be compiled against the same libc used to compile Ladder. for example
+if you use Ladder on themotion docker image (it uses alpine with musl-libc, your plugin should be compiled against musl libc instead of glibc</p>
+</div>
 
 
 			<aside class="copyright" role="note">
@@ -551,7 +718,7 @@ $ ./bin/ladder --help
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://themotion.github.io/ladder/concepts/autoscaler/" title="Autoscaler">
+      <a href="https://themotion.github.io/ladder/operating/api/" title="API">
         <span class="direction">
           Previous
         </span>
@@ -561,7 +728,7 @@ $ ./bin/ladder --help
           </div>
           <div class="stretch">
             <div class="title">
-              Autoscaler
+              API
             </div>
           </div>
         </div>
@@ -571,14 +738,14 @@ $ ./bin/ladder --help
 
   <div class="next">
   
-      <a href="https://themotion.github.io/ladder/introduction/overview/" title="Overview">
+      <a href="https://themotion.github.io/ladder/operating/metrics/" title="Metrics">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Overview
+              Metrics
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

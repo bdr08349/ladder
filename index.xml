@@ -7,8 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Released under the BSD 3-clause &#39;New&#39; or &#39;Revised&#39; license</copyright>
-    <lastBuildDate>Sat, 29 Apr 2017 09:18:33 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 May 2017 10:47:00 +0000</lastBuildDate>
     <atom:link href="https://themotion.github.io/ladder/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Communication channels</title>
+      <link>https://themotion.github.io/ladder/community/mailing-list/</link>
+      <pubDate>Wed, 17 May 2017 10:47:00 +0000</pubDate>
+      
+      <guid>https://themotion.github.io/ladder/community/mailing-list/</guid>
+      <description>&lt;p&gt;Ladder is an open source project. Here you have some channels used to communicate and contribute&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/themotion/ladder/issues&#34;&gt;Github issues&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!forum/ladderproject&#34;&gt;Mailing list&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Quickstart</title>
@@ -429,12 +444,209 @@ Body:&lt;/p&gt;
     </item>
     
     <item>
-      <title>Using as a framework</title>
-      <link>https://themotion.github.io/ladder/operating/framework/</link>
+      <title>Extending Ladder</title>
+      <link>https://themotion.github.io/ladder/operating/extending/</link>
       <pubDate>Sun, 13 Nov 2016 18:02:45 +0000</pubDate>
       
-      <guid>https://themotion.github.io/ladder/operating/framework/</guid>
-      <description>&lt;p&gt;TODO&lt;/p&gt;
+      <guid>https://themotion.github.io/ladder/operating/extending/</guid>
+      <description>
+
+&lt;p&gt;Sometimes we want to scale our custom targets, or apply custom logic on filters or arrengers,
+or our company uses a very strange metric system where all our metrics are, in order you can
+solve this &lt;em&gt;problems&lt;/em&gt; Ladder lets you extend using &lt;a href=&#34;https://golang.org/pkg/plugin&#34;&gt;Go plugins&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Extending Ladder to add custom logic is very easy!, as was described in the [blocks] section, Ladder
+is made up of 5 type of blocks: gatherers, arrangers, solvers, filters and scalers. You can create any
+custom kind of this blocks but it has some requirements.&lt;/p&gt;
+
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You need to compile your plugin against the Ladder version that you want to use&lt;/li&gt;
+&lt;li&gt;It will use Go &amp;gt;=1.8&lt;/li&gt;
+&lt;li&gt;Requires to autoregister the plugin (See the example)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;blocks&#34;&gt;Blocks&lt;/h2&gt;
+
+&lt;p&gt;Depending on each block we want to implement you will need to satisfy specific interfaces. Lets start&lt;/p&gt;
+
+&lt;h3 id=&#34;gatherer&#34;&gt;Gatherer&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;type Gatherer interface {
+	Gather(ctx context.Context) (types.Quantity, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Gather&lt;/code&gt; method receives a context an returns a quantity and an error, this method should get the
+metrics from the external source and return them&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;arranger&#34;&gt;Arranger&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;type Arranger interface {
+	Arrange(ctx context.Context, inputQ, currentQ types.Quantity) (newQ types.Quantity, err error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Arrange&lt;/code&gt; method receives a context and 2 quantities, the first quantity is the value obtained from the
+gatherer and the second one is the current scaling target quantity, it should return the wanted
+quantity to set up on the scaling target (finters and solvers may change this quantity before reaching the scaler) and an error if required&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;solver&#34;&gt;Solver&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;type Solver interface {
+	Solve(ctx context.Context, qs []types.Quantity) (types.Quantity, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Solve&lt;/code&gt; methods receives a context and an slice of quantities, this values will be all the quantities
+got from all the inputters (gatherer + arranger) it should return one, and an error if required&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;filter&#34;&gt;Filter&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;type Filterer interface {
+	Filter(ctx context.Context, currentQ, newQ types.Quantity) (q types.Quantity, br bool, err error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Filter&lt;/code&gt; method receives a context and 2 quantities, the first one is the currenr scalign target quantity
+and the second one is the new quantity (from the solver or previous filter). It returns a quantity
+a boolean that if tru it will break teh chain and an error.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;scaler&#34;&gt;Scaler&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;type Scaler interface {
+	Current(ctx context.Context) (types.Quantity, error)
+	Scale(ctx context.Context, newQ types.Quantity) (scaledQ types.Quantity, mode types.ScalingMode, err error)
+	Wait(ctx context.Context, scaledQ types.Quantity, mode types.ScalingMode) error
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Current&lt;/code&gt; method receives a context and returns a quantity that should be the current quantity an scaling target has, and an error if required&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Scale&lt;/code&gt; receives the context and the scaling quantity decided, it should scale the scaling target and return the quantity scalated to, the scaling mode (ScalingUp, ScalingDown, NotScaling) and an error if required&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Wait&lt;/code&gt; method receives a context, the scaled quantity and the mode of the scalation, it should wait
+until you decide when the scalation process is finished, returns an error if required&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
+
+&lt;p&gt;We will make a simple filter as an example. This filter will be called &lt;code&gt;chaos&lt;/code&gt; and will apply some sort
+of chaos monkey of scalation process. The filter will stop the chain and not scale (return the current quantity as the new quantity) 50% of the times.&lt;/p&gt;
+
+&lt;p&gt;file &lt;code&gt;chaos.go&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;package main
+
+import (
+	&amp;quot;context&amp;quot;
+	&amp;quot;math/rand&amp;quot;
+	&amp;quot;time&amp;quot;
+
+	&amp;quot;github.com/themotion/ladder/autoscaler/filter&amp;quot;
+	&amp;quot;github.com/themotion/ladder/log&amp;quot;
+	&amp;quot;github.com/themotion/ladder/types&amp;quot;
+)
+
+const (
+	chaosRegName = &amp;quot;chaos&amp;quot;
+)
+
+func init() {
+	filter.Register(chaosRegName, filter.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
+		return NewChaos(ctx, opts)
+	}))
+}
+
+// Chaos will drop randomly any scalup or scaledown
+type Chaos struct {
+	ctx context.Context
+	log *log.Log // custom logger
+}
+
+// NewChaos returns a new chaos filter
+func NewChaos(ctx context.Context, _ map[string]interface{}) (*Chaos, error) {
+	asName, ok := ctx.Value(&amp;quot;autoscaler&amp;quot;).(string)
+	if !ok {
+		asName = &amp;quot;unknown&amp;quot;
+	}
+	logger := log.WithFields(log.Fields{
+		&amp;quot;autoscaler&amp;quot;: asName,
+		&amp;quot;kind&amp;quot;:       &amp;quot;filterer&amp;quot;,
+		&amp;quot;name&amp;quot;:       chaosRegName,
+	})
+
+	return &amp;amp;Chaos{
+		ctx: ctx,
+		log: logger,
+	}, nil
+}
+
+// Filter will drop randomly scaling stuff and break the chain
+func (c Chaos) Filter(ctx context.Context, currentQ, newQ types.Quantity) (types.Quantity, bool, error) {
+	var brk bool
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	if r.Intn(100)%2 == 0 {
+		newQ = currentQ
+		brk = true
+		c.log.Warningf(&amp;quot;Chaos applied!, breaking the chain and setting to current&amp;quot;)
+	}
+	return newQ, brk, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We start from top to down:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;init&lt;/code&gt; function executes automatically when the plugin is laoded, in this function we register our filter
+using ladder filter register helper &lt;code&gt;filter.Register&lt;/code&gt; with the filter name &lt;code&gt;chaos&lt;/code&gt;, we register a &lt;code&gt;filter.CreatorFunc&lt;/code&gt; that is a function
+wrapping the creation of our filter object.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;NewChaos&lt;/code&gt; creates the filter instance, it receives the context, from there we get the autoscaling name to
+set up correctly on the logger, and it receives the &lt;code&gt;config&lt;/code&gt; map that we define on the settings, in this
+case, this filter doesn&amp;rsquo;t have any options so, we ignore this parameter.&lt;/p&gt;
+
+&lt;p&gt;At last &lt;code&gt;Filter&lt;/code&gt; will apply chaos when a random number is multiple of 2 (50%).&lt;/p&gt;
+
+&lt;p&gt;We need to compile the plugin against the version of Ladder that will run so we get that Ladder version and
+do &lt;code&gt;go build -buildmode=plugin -o {DST_PATH}/chaos.so ./chaos.go&lt;/code&gt; and we only need to set up on our &lt;code&gt;ladder.cfg&lt;/code&gt; file to load that shared lib (.so). Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;global:
+  warmup: 10s
+  plugins:
+    - myplugins/chaos.so
+
+autoscaler_files:
+  - &amp;quot;cfg-autoscalers/*.yml&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and use it on the autoscalers:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;...
+  filters:
+    - kind: chaos
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Check a full ladder plugin project as a further example &lt;a href=&#34;https://github.com/slok/ladder-plugin-example&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p&gt;Plugins file names (f.e &lt;code&gt;myplugin.go&lt;/code&gt;) can&amp;rsquo;t be the same, See &lt;a href=&#34;https://github.com/golang/go/issues/19004&#34;&gt;Go issue&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p&gt;Ladder plugins should be compiled against the same libc used to compile Ladder. for example
+if you use Ladder on themotion docker image (it uses alpine with musl-libc, your plugin should be compiled against musl libc instead of glibc&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     
@@ -511,6 +723,10 @@ to the other configuration files where the autoscalers are configured.&lt;/p&gt;
   interval: 30s
   warmup: 3m
   scaling_wait_timeout: 3m
+  plugins:
+    - plugins/gatherers.so
+    - plugins/scalers_gcp.so
+    - plugins/scalers_aws.so
 
 autoscaler_files:
   - cfg-autoscalers/services/amis/*.yml
@@ -552,6 +768,8 @@ a program or by default to all the autoscalers depending on the setting&lt;/p&gt
 (gathering, solving&amp;hellip; will occur), by default &lt;code&gt;30s&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;scaling_wait_timeout&lt;/code&gt;: The time that will wait before giving timeout when a
 correct scalation starts the process of waiting until the target has scaled &lt;code&gt;2m&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;plugins&lt;/code&gt;: A list of plugins (.so files) that will be loaded at runtime. See
+&lt;a href=&#34;https://themotion.github.io/ladder/operating/extending/&#34;&gt;extending&lt;/a&gt; section to know more about plugins and how to extend Ladder&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;autoscalers-cofiguration-files&#34;&gt;Autoscalers cofiguration files&lt;/h2&gt;
@@ -1918,7 +2136,7 @@ of sharing a single binary, easy and fast.&lt;/p&gt;
 
 &lt;h2 id=&#34;precompiled-binary&#34;&gt;Precompiled binary&lt;/h2&gt;
 
-&lt;p&gt;TODO (when first version uploaded)&lt;/p&gt;
+&lt;p&gt;Precompiled binaries of releases and RCs are available for download at &lt;a href=&#34;https://github.com/themotion/ladder/releases&#34;&gt;Github&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
 
@@ -1942,78 +2160,6 @@ $ cd $GOPATH/src/github.com/themotion/ladder
 $ make build_release
 $ ./bin/ladder --help
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>https://themotion.github.io/ladder/introduction/overview/</link>
-      <pubDate>Sun, 13 Nov 2016 10:20:46 +0000</pubDate>
-      
-      <guid>https://themotion.github.io/ladder/introduction/overview/</guid>
-      <description>
-
-&lt;h2 id=&#34;what-is-ladder-for&#34;&gt;What is Ladder for?&lt;/h2&gt;
-
-&lt;p&gt;Ladder is a simple and flexible general purpose autoscaler.&lt;/p&gt;
-
-&lt;p&gt;The idea behind Ladder is to autoscale anything configuring and combining reusable &lt;a href=&#34;https://themotion.github.io/ladder/concepts/blocks/&#34;&gt;blocks&lt;/a&gt;
-of different types in a yaml file. These blocks are flexible and easy to extend, so anyone can use or develop any kind of scaling targets,
-policies or inputs.&lt;/p&gt;
-
-&lt;p&gt;Some examples that Ladder can do at this moment:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Get number of messages in a &lt;a href=&#34;https://aws.amazon.com/sqs/&#34;&gt;SQS queue&lt;/a&gt;, apply a constant factor to this input, then use this quantity to upscale or downscale the &lt;a href=&#34;http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html&#34;&gt;EC2 machines&lt;/a&gt; of an &lt;a href=&#34;http://docs.aws.amazon.com/autoscaling/latest/userguide/AutoScalingGroup.html&#34;&gt;AWS AutoscalingGroup&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Get the latency of a service from a &lt;a href=&#34;https://prometheus.io/&#34;&gt;Prometheus&lt;/a&gt; metric, if this latency is greater than 800ms, add one more instance to the actual number of instances of that service running on &lt;a href=&#34;https://aws.amazon.com/ecs/&#34;&gt;ECS&lt;/a&gt;,
-if is less than 200ms remove one instance to the running ones instead.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;You want to start using it? Jump to the &lt;a href=&#34;https://themotion.github.io/ladder/introduction/quickstart/&#34;&gt;tutorial&lt;/a&gt;!&lt;/p&gt;
-
-&lt;h2 id=&#34;what-is-not-ladder-for&#34;&gt;What is not Ladder for?&lt;/h2&gt;
-
-&lt;p&gt;Ladder is not for manual scaling, to ensure that an scaling target is always
-at some quantity, or using Ladders metric to monitor the status of the target.
-Although Ladder could do this, is not the main objective and depending on the
-kind of target, there are other better tools for this purpouses out there.&lt;/p&gt;
-
-&lt;h2 id=&#34;features&#34;&gt;Features&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Very flexible and configurable&lt;/li&gt;
-&lt;li&gt;Simple, light and fast&lt;/li&gt;
-&lt;li&gt;Reliable&lt;/li&gt;
-&lt;li&gt;Easy to configure and extend&lt;/li&gt;
-&lt;li&gt;Metrics ready (Prometheus)&lt;/li&gt;
-&lt;li&gt;Easy to deploy and set up running&lt;/li&gt;
-&lt;li&gt;Tons of third party blocks ready to use (AWS, Prometheus&amp;hellip;)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;future&#34;&gt;Future&lt;/h2&gt;
-
-&lt;p&gt;We want to add more blocks to the ones that Ladder provides by default (ECS &amp;amp; EC2 ASG), for example:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Inputs:
-
-&lt;ul&gt;
-&lt;li&gt;Get metrics from Datadog&lt;/li&gt;
-&lt;li&gt;Get number of messages from Rabbitmq queue&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Filters:
-
-&lt;ul&gt;
-&lt;li&gt;Apply statistic prediction based on a metric, previous autoscaling result, etc&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Scalers:
-
-&lt;ul&gt;
-&lt;li&gt;Kubernetes replicas&lt;/li&gt;
-&lt;li&gt;Instance VMs on  GCE&lt;/li&gt;
-&lt;li&gt;Azure virtual machines&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

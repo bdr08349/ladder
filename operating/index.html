@@ -398,9 +398,33 @@
 
 
 
-<a  title="Using as a framework" href="https://themotion.github.io/ladder/operating/framework/">
+<a  title="Extending Ladder" href="https://themotion.github.io/ladder/operating/extending/">
 	
-	Using as a framework
+	Extending Ladder
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Community</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="Communication channels" href="https://themotion.github.io/ladder/community/mailing-list/">
+	
+	Communication channels
 </a>
 
 
@@ -487,12 +511,13 @@ List autoscalers This enpoint will return the present autoscalers and their stat
 
 			<hr>
 			
-			<a href="https://themotion.github.io/ladder/operating/framework/" title="Using as a framework">
-				<h2>Using as a framework</h2>
+			<a href="https://themotion.github.io/ladder/operating/extending/" title="Extending Ladder">
+				<h2>Extending Ladder</h2>
 			</a>
 
 			<br>
-			TODO
+			Sometimes we want to scale our custom targets, or apply custom logic on filters or arrengers, or our company uses a very strange metric system where all our metrics are, in order you can solve this problems Ladder lets you extend using Go plugins.
+Extending Ladder to add custom logic is very easy!, as was described in the [blocks] section, Ladder is made up of 5 type of blocks: gatherers, arrangers, solvers, filters and scalers.
 
 			<hr>
 			
@@ -514,7 +539,7 @@ metrics_path: /my/awesome/metrics  For now this are the available metrics:
 			<br>
 			Configuration schema Ladder configuration is splitted in 2 main blocks, one the global configuration and a multiple autoscalers blocks. The main entrypoint configuration of Ladder will point to the other configuration files where the autoscalers are configured.
 For example our main configuration is ladder.yml (by default will be this):
-global: metrics_path: /metrics api_v1_path: /api/v1 interval: 30s warmup: 3m scaling_wait_timeout: 3m autoscaler_files: - cfg-autoscalers/services/amis/<em>.yml - cfg-autoscalers/services/main_cluster/</em>.yml - cfg-autoscalers/clusters/*.yml  This file points to our autoscalers that will reside there, see the file structure:
+global: metrics_path: /metrics api_v1_path: /api/v1 interval: 30s warmup: 3m scaling_wait_timeout: 3m plugins: - plugins/gatherers.so - plugins/scalers_gcp.so - plugins/scalers_aws.so autoscaler_files: - cfg-autoscalers/services/amis/*.
 
 			<hr>
 			
