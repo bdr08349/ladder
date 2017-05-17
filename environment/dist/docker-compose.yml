@@ -3,6 +3,8 @@ services:
   ladder:
     build:
       context: ../..
-      dockerfile: environment/dist/Dockerfile_static
+      dockerfile: environment/dist/Dockerfile
     volumes:
       - ../..:/go/src/github.com/themotion/ladder
+    environment:
+      - GITHUB_TOKEN
