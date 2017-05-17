@@ -72,6 +72,9 @@ Go to http://127.0.0.1:1313 on the browser
 
 ![](docs/static/img/grafana.png)
 
+## Contributing
+You can ask or expose any kind of information/question regarding Ladder on the [mailing list](https://groups.google.com/forum/#!forum/ladderproject)
+
 ## Changelog
 
 See [changelog](CHANGELOG.md)
