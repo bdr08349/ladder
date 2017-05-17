@@ -87,7 +87,7 @@ stop:
 
 # Build release, target on /bin
 build_release:build
-		cd environment/dev && docker-compose run --rm $(SERVICE_NAME) /bin/bash -c "./build.sh"
+		cd environment/dist && docker-compose run --rm $(SERVICE_NAME) /bin/bash -c "./build.sh"
 
 # Update project dependencies to tle latest version
 dep_update:build
@@ -127,7 +127,7 @@ push: image-release
 		rm -rf ${HOME}/.docker
 
 gh-release: build
-	cd environment/dev && docker-compose run --rm $(SERVICE_NAME) /bin/bash -c './gh-release.sh'
+	cd environment/dist && docker-compose run --rm $(SERVICE_NAME) /bin/bash -c './gh-release.sh'
 
 # Docs command
 docs_build:

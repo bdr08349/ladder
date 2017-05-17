@@ -51,6 +51,9 @@ type testStruct struct {
 	*testEmbeded `ini:"grade"`
 	Unused       int `ini:"-"`
 	Unsigned     uint
+	Omitted      bool     `ini:"omitthis,omitempty"`
+	Shadows      []string `ini:",,allowshadow"`
+	ShadowInts   []int    `ini:"Shadows,,allowshadow"`
 }
 
 const _CONF_DATA_STRUCT = `
@@ -61,6 +64,9 @@ Money = 1.25
 Born = 1993-10-07T20:17:05Z
 Duration = 2h45m
 Unsigned = 3
+omitthis = true
+Shadows = 1, 2
+Shadows = 3, 4
 
 [Others]
 Cities = HangZhou|Boston
@@ -185,6 +191,23 @@ func Test_Struct(t *testing.T) {
 			So(cfg.MapTo(&unsupport4{}), ShouldNotBeNil)
 		})
 
+		Convey("Map to omitempty field", func() {
+			ts := new(testStruct)
+			So(MapTo(ts, []byte(_CONF_DATA_STRUCT)), ShouldBeNil)
+
+			So(ts.Omitted, ShouldEqual, true)
+		})
+
+		Convey("Map with shadows", func() {
+			cfg, err := LoadSources(LoadOptions{AllowShadows: true}, []byte(_CONF_DATA_STRUCT))
+			So(err, ShouldBeNil)
+			ts := new(testStruct)
+			So(cfg.MapTo(ts), ShouldBeNil)
+
+			So(strings.Join(ts.Shadows, " "), ShouldEqual, "1 2 3 4")
+			So(fmt.Sprintf("%v", ts.ShadowInts), ShouldEqual, "[1 2 3 4]")
+		})
+
 		Convey("Map from invalid data source", func() {
 			So(MapTo(&testStruct{}, "hi"), ShouldNotBeNil)
 		})
@@ -268,6 +291,28 @@ None        =
 
 		Convey("Reflect from non-point struct", func() {
 			So(ReflectFrom(cfg, Author{}), ShouldNotBeNil)
+		})
+
+		Convey("Reflect from struct with omitempty", func() {
+			cfg := Empty()
+			type SpecialStruct struct {
+				FirstName  string    `ini:"first_name"`
+				LastName   string    `ini:"last_name"`
+				JustOmitMe string    `ini:"omitempty"`
+				LastLogin  time.Time `ini:"last_login,omitempty"`
+				LastLogin2 time.Time `ini:",omitempty"`
+				NotEmpty   int       `ini:"omitempty"`
+			}
+
+			So(ReflectFrom(cfg, &SpecialStruct{FirstName: "John", LastName: "Doe", NotEmpty: 9}), ShouldBeNil)
+
+			var buf bytes.Buffer
+			_, err = cfg.WriteTo(&buf)
+			So(buf.String(), ShouldEqual, `first_name = John
+last_name  = Doe
+omitempty  = 9
+
+`)
 		})
 	})
 }

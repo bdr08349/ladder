@@ -47,6 +47,7 @@ type Global struct {
 	Interval           time.Duration `yaml:"interval,omitempty"`
 	Warmup             time.Duration `yaml:"warmup,omitempty"`
 	ScalingWaitTimeout time.Duration `yaml:"scaling_wait_timeout,omitempty"`
+	Plugins            []string      `yaml:"plugins,omitempty"`
 }
 
 // AutoscalerFiles are the file path matchs of the autoscalers

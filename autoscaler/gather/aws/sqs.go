@@ -47,16 +47,11 @@ type SQS struct {
 	log *log.Log // Custom logger
 }
 
-// sqsCreator creates the the sqs gatherer creator
-type sqsCreator struct{}
-
-func (a *sqsCreator) Create(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
-	return NewSQS(ctx, opts)
-}
-
 // Autoregister on gatherers creators
 func init() {
-	gather.Register(sqsRegName, &sqsCreator{})
+	gather.Register(sqsRegName, gather.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
+		return NewSQS(ctx, opts)
+	}))
 }
 
 // NewSQS creates an SQS gatherer

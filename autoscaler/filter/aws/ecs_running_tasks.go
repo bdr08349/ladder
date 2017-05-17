@@ -70,14 +70,11 @@ type ECSRunningTasks struct {
 
 // Autoregister on filterers creator
 func init() {
-	filter.Register(ecsRunningTasksRegName, &ecsRTCreator{})
+	filter.Register(ecsRunningTasksRegName, filter.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
+		return NewECSRunningTasks(ctx, opts)
+	}))
 }
 
-type ecsRTCreator struct{}
-
-func (e *ecsRTCreator) Create(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
-	return NewECSRunningTasks(ctx, opts)
-}
 
 // NewECSRunningTasks creates a ECSRunningTasks object
 func NewECSRunningTasks(ctx context.Context, opts map[string]interface{}) (e *ECSRunningTasks, err error) {

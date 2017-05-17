@@ -26,15 +26,11 @@ type Stdout struct {
 	currentQ int64
 }
 
-type stdoutCreator struct{}
-
-func (s *stdoutCreator) Create(_ context.Context, opts map[string]interface{}) (scale.Scaler, error) {
-	return NewStdout(opts)
-}
-
 // Autoregister on arranger creators
 func init() {
-	scale.Register(stdoutRegName, &stdoutCreator{})
+	scale.Register(stdoutRegName, scale.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (scale.Scaler, error) {
+		return NewStdout(opts)
+	}))
 }
 
 // NewStdout creates an stdout scaler

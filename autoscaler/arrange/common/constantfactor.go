@@ -31,15 +31,11 @@ const (
 	cfRTFloor = "floor"
 )
 
-type constFactorCreator struct{}
-
-func (c *constFactorCreator) Create(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
-	return NewConstFactor(ctx, opts)
-}
-
 // Autoregister on arranger creators
 func init() {
-	arrange.Register(constFactorRegName, &constFactorCreator{})
+	arrange.Register(constFactorRegName, arrange.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (arrange.Arranger, error) {
+		return NewConstFactor(ctx, opts)
+	}))
 }
 
 // NewConstFactor will create a Const factor arranger

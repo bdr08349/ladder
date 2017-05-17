@@ -26,15 +26,11 @@ type Limit struct {
 	log *log.Log // custom logger
 }
 
-type limitCreator struct{}
-
-func (l *limitCreator) Create(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
-	return NewLimit(ctx, opts)
-}
-
 // Autoregister on filterers creator
 func init() {
-	filter.Register(limitRegName, &limitCreator{})
+	filter.Register(limitRegName, filter.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
+		return NewLimit(ctx, opts)
+	}))
 }
 
 // NewLimit creates a limit filterer

@@ -76,16 +76,11 @@ type ASG struct {
 	log *log.Log
 }
 
-// asgCreator creates the auto scaling group scaler creator
-type asgCreator struct{}
-
-func (a *asgCreator) Create(ctx context.Context, opts map[string]interface{}) (scale.Scaler, error) {
-	return NewASG(ctx, opts)
-}
-
 // Autoregister on scaler creators
 func init() {
-	scale.Register(asgRegName, &asgCreator{})
+	scale.Register(asgRegName, scale.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (scale.Scaler, error) {
+		return NewASG(ctx, opts)
+	}))
 }
 
 // NewASG creates an ASG scaler

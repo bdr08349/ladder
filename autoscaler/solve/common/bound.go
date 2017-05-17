@@ -44,15 +44,11 @@ type Bound struct {
 	kind boundKind
 }
 
-type boundCreator struct{}
-
-func (b *boundCreator) Create(ctx context.Context, opts map[string]interface{}) (solve.Solver, error) {
-	return NewBound(ctx, opts)
-}
-
 // Autoregister on solvers creator
 func init() {
-	solve.Register(boundRegName, &boundCreator{})
+	solve.Register(boundRegName, solve.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (solve.Solver, error) {
+		return NewBound(ctx, opts)
+	}))
 }
 
 // NewBound creates a bound solver

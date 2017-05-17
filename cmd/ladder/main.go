@@ -17,6 +17,7 @@ import (
 	"github.com/themotion/ladder/autoscaler/solve"
 	"github.com/themotion/ladder/config"
 	"github.com/themotion/ladder/log"
+	"github.com/themotion/ladder/plugin"
 	"github.com/themotion/ladder/version"
 	"github.com/themotion/ladder/web"
 	"github.com/themotion/ladder/web/api/v1"
@@ -102,6 +103,18 @@ func Main() int {
 	c, err := config.LoadConfig(cfg.configFile)
 	if err != nil {
 		log.Logger.Errorf("Error starting ladder: %s", err)
+		return 1
+	}
+
+	// Load config plugins
+	log.Logger.Infof("Loading plugins")
+	pl, err := plugin.NewBaseLoader()
+	if err != nil {
+		log.Logger.Errorf("Error Creating plugin loader: %s", err)
+	}
+
+	if err := pl.LoadFromConfig(c); err != nil {
+		log.Logger.Errorf("Error loading plugins: %s", err)
 		return 1
 	}
 

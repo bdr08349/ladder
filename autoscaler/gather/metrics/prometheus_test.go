@@ -1,15 +1,13 @@
 package metrics
 
 import (
+	"context"
 	"errors"
 	"math"
 	"testing"
 	"time"
 
-	// TODO: Deprecated in 1.7, clean when updating github.com/prometheus/client_golang
-	"golang.org/x/net/context"
-
-	"github.com/prometheus/client_golang/api/prometheus"
+	"github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 
 	"github.com/themotion/ladder/log"
@@ -70,12 +68,16 @@ type queryAPITestClient struct {
 func (q *queryAPITestClient) Query(ctx context.Context, query string, ts time.Time) (model.Value, error) {
 	var err error
 	if q.wantError {
-		err = errors.New("Wrong!")
+		err = errors.New("wrong")
 	}
 	return q.value, err
 }
 
-func (q *queryAPITestClient) QueryRange(ctx context.Context, query string, r prometheus.Range) (model.Value, error) {
+func (q *queryAPITestClient) QueryRange(ctx context.Context, query string, r v1.Range) (model.Value, error) {
+	return nil, nil
+}
+
+func (q *queryAPITestClient) LabelValues(ctx context.Context, label string) (model.LabelValues, error) {
 	return nil, nil
 }
 
@@ -215,7 +217,7 @@ func TestPrometheusMetricGather(t *testing.T) {
 			log:       log.New(),
 		}
 
-		p.apiCs = make([]prometheus.QueryAPI, 1)
+		p.apiCs = make([]v1.API, 1)
 		p.apiCs[0] = &queryAPITestClient{
 			value:     test.v,
 			wantError: test.apiError,
@@ -267,7 +269,7 @@ func TestPrometheusMetricGatherRetries(t *testing.T) {
 			log: log.New(),
 		}
 
-		p.apiCs = make([]prometheus.QueryAPI, len(test.endpointShouldError))
+		p.apiCs = make([]v1.API, len(test.endpointShouldError))
 		v := model.Vector{
 			&model.Sample{
 				Metric:    model.Metric{},
@@ -277,7 +279,7 @@ func TestPrometheusMetricGatherRetries(t *testing.T) {
 		}
 
 		// Create all endpoints
-		p.apiCs = make([]prometheus.QueryAPI, len(test.endpointShouldError))
+		p.apiCs = make([]v1.API, len(test.endpointShouldError))
 		for i, e := range test.endpointShouldError {
 			p.apiCs[i] = &queryAPITestClient{
 				value:     v,

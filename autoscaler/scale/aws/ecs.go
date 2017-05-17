@@ -43,16 +43,11 @@ type ECSService struct {
 	log            *log.Log      // custom logger
 }
 
-// ecsCreator creates the auto scaling group scaler creator
-type ecsCreator struct{}
-
-func (e *ecsCreator) Create(ctx context.Context, opts map[string]interface{}) (scale.Scaler, error) {
-	return NewECSService(ctx, opts)
-}
-
 // Autoregister on scaler creators
 func init() {
-	scale.Register(ecsRegName, &ecsCreator{})
+	scale.Register(ecsRegName, scale.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (scale.Scaler, error) {
+		return NewECSService(ctx, opts)
+	}))
 }
 
 // NewECSService creates an ECSService scaler

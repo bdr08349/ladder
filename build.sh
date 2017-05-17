@@ -13,6 +13,9 @@ F_VER="-X github.com/themotion/ladder/version.Version=${VERSION}"
 F_REV="-X github.com/themotion/ladder/version.Revision=${REVISION}"
 F_BR="-X github.com/themotion/ladder/version.Branch=${BRANCH}"
 F_DA="-X github.com/themotion/ladder/version.BuildDate=${DATE}"
-F_CMP="-w -linkmode external -extldflags '-static'"
+F_CMP="-w -linkmode external"
+# Static disabled because of dynamic plugin loader
+#F_CMP="${F_CMP} -extldflags '-static'"
+
 
 go build -o ${OUT} --ldflags "${F_VER} ${F_REV} ${F_BR} ${F_DA} ${F_CMP}" ${SRC}

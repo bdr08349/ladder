@@ -30,15 +30,11 @@ type ScalingKindInterval struct {
 	log         *log.Log // custom logger
 }
 
-type scalingKindIntervalCreator struct{}
-
-func (s *scalingKindIntervalCreator) Create(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
-	return NewScalingKindInterval(ctx, opts)
-}
-
 // Autoregister on filterers creator
 func init() {
-	filter.Register(skiRegName, &scalingKindIntervalCreator{})
+	filter.Register(skiRegName, filter.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (filter.Filterer, error) {
+		return NewScalingKindInterval(ctx, opts)
+	}))
 }
 
 // NewScalingKindInterval creates an scalingKindInterval filterer

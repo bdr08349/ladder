@@ -102,16 +102,11 @@ type CWMetric struct {
 	log        *log.Log      // custom logger
 }
 
-// cwMetricCreator creates the cloudwatch metric gatherer creator
-type cwMetricCreator struct{}
-
-func (a *cwMetricCreator) Create(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
-	return NewCWMetric(ctx, opts)
-}
-
 // Autoregister on gatherers creators
 func init() {
-	gather.Register(cwRegName, &cwMetricCreator{})
+	gather.Register(cwRegName, gather.CreatorFunc(func(ctx context.Context, opts map[string]interface{}) (gather.Gatherer, error) {
+		return NewCWMetric(ctx, opts)
+	}))
 }
 
 // NewCWMetric creates an Cloudwatch gatherer

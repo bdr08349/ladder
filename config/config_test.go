@@ -20,6 +20,7 @@ func TestConfigCorrect(t *testing.T) {
 			Interval:           30 * time.Second,
 			Warmup:             3 * time.Minute,
 			ScalingWaitTimeout: 1 * time.Minute,
+			Plugins:            []string{"plugins/plugin1.so", "plugins/plugin2.so", "plugins/plugin3.so"},
 		},
 		Autoscalers: []Autoscaler{
 			Autoscaler{
