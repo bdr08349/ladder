@@ -25,7 +25,7 @@ const (
 	ecsRegName = "aws_ecs_service"
 
 	// internal constants
-	ecsDefaultWaiterInterval = 5 * time.Second
+	ecsDefaultWaiterInterval = 40 * time.Second
 )
 
 // Generate autoscaling EC2 API mocks running go generate
